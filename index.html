@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyFund - Investment & Loan Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06d6a0;
+            --bg-light: #f8fafc;
+            --bg-dark: #1e293b;
+            --text-light: #334155;
+            --text-dark: #f1f5f9;
+            --card-light: #ffffff;
+            --card-dark: #334155;
+            --border-light: #e2e8f0;
+            --border-dark: #475569;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        body.rtl {
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shapes:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-shapes:nth-child(2) { top: 20%; right: 20%; animation-delay: 1s; }
+        .floating-shapes:nth-child(3) { bottom: 30%; left: 30%; animation-delay: 2s; }
+        .floating-shapes:nth-child(4) { bottom: 10%; right: 10%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--border-light);
+            margin-bottom: 30px;
+        }
+
+        body.dark .header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 25px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: perspective(500px) rotateX(0deg);
+        }
+
+        .toggle-btn:hover {
+            transform: perspective(500px) rotateX(10deg) scale(1.05);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-light);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            transform: perspective(1000px) rotateX(5deg);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark .card {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--card-light);
+            color: var(--text-light);
+        }
+
+        body.dark .form-group input,
+        body.dark .form-group select,
+        body.dark .form-group textarea {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: perspective(500px) rotateX(5deg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: perspective(500px) rotateX(0deg) translateY(-3px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, var(--accent-color), #20bf6b);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            transform: perspective(500px) rotateY(5deg);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: perspective(500px) rotateY(0deg) scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: countUp 1s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 5px;
+            background: var(--card-light);
+            border-radius: 15px;
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark .nav-tabs {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        body.dark .nav-tab {
+            color: var(--text-dark);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Wallet Display */
+        .wallet-display {
+            background: linear-gradient(135deg, var(--accent-color), #20bf6b);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            transform: perspective(500px) rotateX(10deg);
+            animation: walletGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes walletGlow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(6, 214, 160, 0.3); }
+            50% { box-shadow: 0 20px 50px rgba(6, 214, 160, 0.5); }
+        }
+
+        .wallet-balance {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Investment Cards */
+        .investment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .investment-card {
+            background: var(--card-light);
+            border: 2px solid var(--border-light);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            transform: perspective(500px) rotateY(-5deg);
+        }
+
+        body.dark .investment-card {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .investment-card:hover {
+            transform: perspective(500px) rotateY(0deg) translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--border-light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        body.dark .progress-bar {
+            background: var(--border-dark);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            transition: width 1s ease;
+            animation: progressPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes progressPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--card-light);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .modal-content {
+            background: var(--card-dark);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        /* Transaction History */
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .transaction-item {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .transaction-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateX(10px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wallet-balance {
+                font-size: 2rem;
+            }
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Arabic Text Styling */
+        .rtl .card {
+            text-align: right;
+        }
+
+        .rtl .form-group input,
+        .rtl .form-group select,
+        .rtl .form-group textarea {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-shapes"></div>
+        <div class="floating-shapes"></div>
+        <div class="floating-shapes"></div>
+        <div class="floating-shapes"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo" data-en="EasyFund" data-ar="إيزي فاند">EasyFund</div>
+            <div class="header-controls">
+                <button class="toggle-btn" onclick="toggleLanguage()" data-en="العربية" data-ar="English">العربية</button>
+                <button class="toggle-btn" onclick="toggleTheme()" data-en="🌙" data-ar="🌙">🌙</button>
+                <button class="toggle-btn" onclick="logout()" id="logoutBtn" data-en="Logout" data-ar="تسجيل خروج" style="display: none;">Logout</button>
+            </div>
+        </div>
+
+        <!-- Authentication Section -->
+        <div id="authSection">
+            <div class="card">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="showLogin()" data-en="Login" data-ar="تسجيل دخول">Login</button>
+                    <button class="nav-tab" onclick="showSignup()" data-en="Sign Up" data-ar="إنشاء حساب">Sign Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginForm">
+                    <h2 data-en="Welcome Back!" data-ar="مرحباً بعودتك!">Welcome Back!</h2>
+                    <div class="form-group">
+                        <label data-en="Email" data-ar="البريد الإلكتروني">Email</label>
+                        <input type="email" id="loginEmail" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Password" data-ar="كلمة المرور">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary" onclick="login()" data-en="Login" data-ar="تسجيل دخول">Login</button>
+                </div>
+
+                <!-- Signup Form -->
+                <div id="signupForm" class="hidden">
+                    <h2 data-en="Create Account" data-ar="إنشاء حساب">Create Account</h2>
+                    <div class="form-group">
+                        <label data-en="Full Name" data-ar="الاسم الكامل">Full Name</label>
+                        <input type="text" id="signupName" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Email" data-ar="البريد الإلكتروني">Email</label>
+                        <input type="email" id="signupEmail" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Password" data-ar="كلمة المرور">Password</label>
+                        <input type="password" id="signupPassword" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Referral Code (Optional)" data-ar="كود الإحالة (اختياري)">Referral Code (Optional)</label>
+                        <input type="text" id="referralCode" placeholder="Enter referral code">
+                    </div>
+                    <button class="btn btn-primary" onclick="signup()" data-en="Create Account" data-ar="إنشاء حساب">Create Account</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="hidden">
+            <!-- Wallet Display -->
+            <div class="wallet-display">
+                <div data-en="Wallet Balance" data-ar="رصيد المحفظة">Wallet Balance</div>
+                <div class="wallet-balance" id="walletBalance">₦0.00</div>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-success" onclick="showDepositModal()" data-en="Deposit" data-ar="إيداع">Deposit</button>
+                    <button class="btn btn-danger" onclick="showWithdrawModal()" data-en="Withdraw" data-ar="سحب">Withdraw</button>
+                </div>
+            </div>
+
+            <!-- Main Navigation -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showDashboard()" data-en="Dashboard" data-ar="لوحة التحكم">Dashboard</button>
+                <button class="nav-tab" onclick="showLoans()" data-en="Loans" data-ar="القروض">Loans</button>
+                <button class="nav-tab" onclick="showInvestments()" data-en="Investments" data-ar="الاستثمارات">Investments</button>
+                <button class="nav-tab" onclick="showTransactions()" data-en="History" data-ar="التاريخ">History</button>
+                <button class="nav-tab" onclick="showReferrals()" data-en="Referrals" data-ar="الإحالات">Referrals</button>
+            </div>
+
+            <!-- Dashboard Overview -->
+            <div id="dashboardContent">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalInvestments">0</div>
+                        <div data-en="Active Investments" data-ar="الاستثمارات النشطة">Active Investments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalLoans">0</div>
+                        <div data-en="Active Loans" data-ar="القروض النشطة">Active Loans</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalReferrals">0</div>
+                        <div data-en="Referrals Made" data-ar="الإحالات المحققة">Referrals Made</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 data-en="Quick Actions" data-ar="إجراءات سريعة">Quick Actions</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="showLoans()" data-en="Apply for Loan" data-ar="طلب قرض">Apply for Loan</button>
+                        <button class="btn btn-success" onclick="showInvestments()" data-en="Start Investment" data-ar="بدء استثمار">Start Investment</button>
+                        <button class="btn btn-primary" onclick="showReferrals()" data-en="Invite Friends" data-ar="دعوة الأصدقاء">Invite Friends</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loans Section -->
+            <div id="loansContent" class="hidden">
+                <div class="card">
+                    <h3 data-en="Loan Application" data-ar="طلب قرض">Loan Application</h3>
+                    <div id="loanForm">
+                        <div class="form-group">
+                            <label data-en="Full Name" data-ar="الاسم الكامل">Full Name</label>
+                            <input type="text" id="loanName" placeholder="Enter full name">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="National ID Number" data-ar="رقم الهوية الوطنية">National ID Number</label>
+                            <input type="text" id="loanNationalId" placeholder="Enter national ID">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Phone Number" data-ar="رقم الهاتف">Phone Number</label>
+                            <input type="tel" id="loanPhone" placeholder="Enter phone number">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Loan Amount (₦)" data-ar="مبلغ القرض (₦)">Loan Amount (₦)</label>
+                            <input type="number" id="loanAmount" placeholder="Enter amount" min="1000">
+                            <small data-en="You need 20% of loan amount in your wallet" data-ar="تحتاج 20% من مبلغ القرض في محفظتك">You need 20% of loan amount in your wallet</small>
+                        </div>
+                        <button class="btn btn-primary" onclick="applyLoan()" data-en="Apply for Loan" data-ar="طلب القرض">Apply for Loan</button>
+                    </div>
+                </div>
+
+                <div class="card" id="activeLoanCard" style="display: none;">
+                    <h3 data-en="Active Loan" data-ar="القرض النشط">Active Loan</h3>
+                    <div id="activeLoanDetails"></div>
+                </div>
+            </div>
+
+            <!-- Investments Section -->
+            <div id="investmentsContent" class="hidden">
+                <div class="card">
+                    <h3 data-en="New Investment" data-ar="استثمار جديد">New Investment</h3>
+                    <div class="form-group">
+                        <label data-en="Investment Type" data-ar="نوع الاستثمار">Investment Type</label>
+                        <select id="investmentType">
+                            <option value="">Select investment type</option>
+                            <option value="Real Estate">Real Estate</option>
+                            <option value="Cryptocurrency">Cryptocurrency</option>
+                            <option value="Palm Oil">Palm Oil</option>
+                            <option value="Agriculture">Agriculture</option>
+                            <option value="Technology">Technology</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Custom Investment (Optional)" data-ar="استثمار مخصص (اختياري)">Custom Investment (Optional)</label>
+                        <input type="text" id="customInvestment" placeholder="Enter custom investment type">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Investment Amount (Min ₦5,000)" data-ar="مبلغ الاستثمار (الحد الأدنى ₦5,000)">Investment Amount (Min ₦5,000)</label>
+                        <input type="number" id="investmentAmount" placeholder="5000" min="5000">
+                    </div>
+                    <div class="card" style="background: linear-gradient(135deg, var(--accent-color), #20bf6b); color: white; text-align: center;">
+                        <h4 data-en="Investment Plan" data-ar="خطة الاستثمار">Investment Plan</h4>
+                        <p data-en="Invest ₦5,000 and get ₦30,000 in 7 days" data-ar="استثمر ₦5,000 واحصل على ₦30,000 في 7 أيام">Invest ₦5,000 and get ₦30,000 in 7 days</p>
+                        <p data-en="600% Return on Investment!" data-ar="عائد 600% على الاستثمار!">600% Return on Investment!</p>
+                    </div>
+                    <button class="btn btn-success" onclick="makeInvestment()" data-en="Start Investment" data-ar="بدء الاستثمار">Start Investment</button>
+                </div>
+
+                <div class="investment-grid" id="investmentsList"></div>
+            </div>
+
+            <!-- Transactions Section -->
+            <div id="transactionsContent" class="hidden">
+                <div class="card">
+                    <h3 data-en="Transaction History" data-ar="تاريخ المعاملات">Transaction History</h3>
+                    <div id="transactionsList"></div>
+                </div>
+            </div>
+
+            <!-- Referrals Section -->
+            <div id="referralsContent" class="hidden">
+                <div class="card">
+                    <h3 data-en="Referral System" data-ar="نظام الإحالة">Referral System</h3>
+                    <p data-en="Invite friends and earn ₦500 for each successful referral!" data-ar="ادع الأصدقاء واكسب ₦500 لكل إحالة ناجحة!">Invite friends and earn ₦500 for each successful referral!</p>
+                    <div class="form-group">
+                        <label data-en="Your Referral Code" data-ar="كود الإحالة الخاص بك">Your Referral Code</label>
+                        <input type="text" id="userReferralCode" readonly>
+                        <button class="btn btn-primary" onclick="copyReferralCode()" style="margin-top: 10px;" data-en="Copy Code" data-ar="نسخ الكود">Copy Code</button>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="referralEarnings">₦0</div>
+                        <div data-en="Total Referral Earnings" data-ar="إجمالي أرباح الإحالة">Total Referral Earnings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deposit Modal -->
+        <div id="depositModal" class="modal">
+            <div class="modal-content">
+                <h3 data-en="Deposit Money" data-ar="إيداع المال">Deposit Money</h3>
+                <p data-en="Transfer money to the account below and wait for admin confirmation:" data-ar="حول المال إلى الحساب أدناه وانتظر تأكيد المدير:">Transfer money to the account below and wait for admin confirmation:</p>
+                <div class="card">
+                    <strong data-en="Bank Details" data-ar="تفاصيل البنك">Bank Details</strong><br>
+                    <strong data-en="Account Number:" data-ar="رقم الحساب:">Account Number:</strong> 6109172525<br>
+                    <strong data-en="Bank:" data-ar="البنك:">Bank:</strong> Opay<br>
+                    <strong data-en="Account Name:" data-ar="اسم الحساب:">Account Name:</strong> EasyFund
+                </div>
+                <div class="form-group">
+                    <label data-en="Amount You Sent (₦)" data-ar="المبلغ المرسل (₦)">Amount You Sent (₦)</label>
+                    <input type="number" id="depositAmount" placeholder="Enter amount you transferred">
+                </div>
+                <div class="form-group">
+                    <label data-en="Transaction Reference" data-ar="مرجع المعاملة">Transaction Reference</label>
+                    <input type="text" id="transactionRef" placeholder="Enter transaction reference/ID">
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn btn-success" onclick="submitDepositRequest()" data-en="Submit Request" data-ar="إرسال الطلب">Submit Request</button>
+                    <button class="btn btn-danger" onclick="closeModal('depositModal')" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Withdraw Modal -->
+        <div id="withdrawModal" class="modal">
+            <div class="modal-content">
+                <h3 data-en="Withdraw Money" data-ar="سحب المال">Withdraw Money</h3>
+                <div class="form-group">
+                    <label data-en="Bank Name" data-ar="اسم البنك">Bank Name</label>
+                    <input type="text" id="withdrawBank" placeholder="Enter bank name">
+                </div>
+                <div class="form-group">
+                    <label data-en="Account Number" data-ar="رقم الحساب">Account Number</label>
+                    <input type="text" id="withdrawAccount" placeholder="Enter account number">
+                </div>
+                <div class="form-group">
+                    <label data-en="Amount (Min ₦1,000)" data-ar="المبلغ (الحد الأدنى ₦1,000)">Amount (Min ₦1,000)</label>
+                    <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1000">
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn btn-danger" onclick="processWithdraw()" data-en="Withdraw" data-ar="سحب">Withdraw</button>
+                    <button class="btn btn-primary" onclick="closeModal('withdrawModal')" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="hidden">
+            <div class="card">
+                <h3>Admin Dashboard</h3>
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="adminTotalUsers">0</div>
+                        <div>Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="adminTotalDeposits">₦0</div>
+                        <div>Total Deposits</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="adminTotalLoans">₦0</div>
+                        <div>Total Loans</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pending Deposits Section -->
+            <div class="card">
+                <h3>Pending Deposit Requests</h3>
+                <div id="pendingDeposits"></div>
+            </div>
+            
+            <!-- User Management Section -->
+            <div class="card">
+                <h3>User Management</h3>
+                <div class="form-group">
+                    <label>Select User</label>
+                    <select id="adminUserSelect">
+                        <option value="">Select a user</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Credit Amount (₦)</label>
+                    <input type="number" id="adminCreditAmount" placeholder="Enter amount to credit">
+                </div>
+                <button class="btn btn-success" onclick="adminCreditUser()">Credit User Wallet</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentUser = null;
+        let currentLanguage = 'en';
+        let isDarkMode = false;
+        let users = JSON.parse(localStorage.getItem('easyfund_users') || '[]');
+        let investments = JSON.parse(localStorage.getItem('easyfund_investments') || '[]');
+        let loans = JSON.parse(localStorage.getItem('easyfund_loans') || '[]');
+        let transactions = JSON.parse(localStorage.getItem('easyfund_transactions') || '[]');
+        let depositRequests = JSON.parse(localStorage.getItem('easyfund_depositRequests') || '[]');
+
+        // Language Translations
+        const translations = {
+            en: {
+                welcome: "Welcome Back!",
+                createAccount: "Create Account",
+                login: "Login",
+                signup: "Sign Up",
+                email: "Email",
+                password: "Password",
+                fullName: "Full Name",
+                walletBalance: "Wallet Balance",
+                deposit: "Deposit",
+                withdraw: "Withdraw",
+                loans: "Loans",
+                investments: "Investments",
+                dashboard: "Dashboard",
+                history: "History",
+                referrals: "Referrals"
+            },
+            ar: {
+                welcome: "مرحباً بعودتك!",
+                createAccount: "إنشاء حساب",
+                login: "تسجيل دخول",
+                signup: "إنشاء حساب",
+                email: "البريد الإلكتروني",
+                password: "كلمة المرور",
+                fullName: "الاسم الكامل",
+                walletBalance: "رصيد المحفظة",
+                deposit: "إيداع",
+                withdraw: "سحب",
+                loans: "القروض",
+                investments: "الاستثمارات",
+                dashboard: "لوحة التحكم",
+                history: "التاريخ",
+                referrals: "الإحالات"
+            }
+        };
+
+        // Initialize App
+        function initApp() {
+            checkAuthStatus();
+            updateLanguage();
+            loadUserData();
+            setInterval(checkInvestmentMaturity, 60000); // Check every minute
+        }
+
+        // Authentication Functions
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab')[0].classList.add('active');
+        }
+
+        function showSignup() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab')[1].classList.add('active');
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert(currentLanguage === 'en' ? 'Please fill all fields' : 'يرجى ملء جميع الحقول');
+                return;
+            }
+
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('easyfund_currentUser', JSON.stringify(user));
+                showDashboardSection();
+                animateLogin();
+            } else {
+                alert(currentLanguage === 'en' ? 'Invalid credentials' : 'بيانات دخول خاطئة');
+            }
+        }
+
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const referralCode = document.getElementById('referralCode').value;
+
+            if (!name || !email || !password) {
+                alert(currentLanguage === 'en' ? 'Please fill all fields' : 'يرجى ملء جميع الحقول');
+                return;
+            }
+
+            if (users.find(u => u.email === email)) {
+                alert(currentLanguage === 'en' ? 'Email already exists' : 'البريد الإلكتروني موجود بالفعل');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                password,
+                wallet: 0,
+                referralCode: generateReferralCode(),
+                referredBy: referralCode,
+                referralEarnings: 0,
+                joinDate: new Date()
+            };
+
+            // Process referral bonus
+            if (referralCode) {
+                const referrer = users.find(u => u.referralCode === referralCode);
+                if (referrer) {
+                    referrer.wallet += 500;
+                    referrer.referralEarnings += 500;
+                    addTransaction(referrer.id, 'referral', 500, 'Referral bonus');
+                }
+            }
+
+            users.push(newUser);
+            localStorage.setItem('easyfund_users', JSON.stringify(users));
+            
+            currentUser = newUser;
+            localStorage.setItem('easyfund_currentUser', JSON.stringify(newUser));
+            
+            showDashboardSection();
+            animateSignup();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('easyfund_currentUser');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('logoutBtn').style.display = 'none';
+        }
+
+        function checkAuthStatus() {
+            const savedUser = localStorage.getItem('easyfund_currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboardSection();
+            }
+        }
+
+        function showDashboardSection() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('logoutBtn').style.display = 'block';
+            
+            // Show admin panel if admin user
+            if (currentUser && currentUser.email === 'admin@easyfund.com') {
+                showAdminPanel();
+            }
+            
+            updateWalletDisplay();
+            showDashboard();
+        }
+
+        // Navigation Functions
+        function showDashboard() {
+            hideAllContent();
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            updateDashboardStats();
+            setActiveTab(0);
+        }
+
+        function showLoans() {
+            hideAllContent();
+            document.getElementById('loansContent').classList.remove('hidden');
+            loadActiveLoan();
+            setActiveTab(1);
+        }
+
+        function showInvestments() {
+            hideAllContent();
+            document.getElementById('investmentsContent').classList.remove('hidden');
+            loadInvestments();
+            setActiveTab(2);
+        }
+
+        function showTransactions() {
+            hideAllContent();
+            document.getElementById('transactionsContent').classList.remove('hidden');
+            loadTransactions();
+            setActiveTab(3);
+        }
+
+        function showReferrals() {
+            hideAllContent();
+            document.getElementById('referralsContent').classList.remove('hidden');
+            loadReferrals();
+            setActiveTab(4);
+        }
+
+        function hideAllContent() {
+            document.getElementById('dashboardContent').classList.add('hidden');
+            document.getElementById('loansContent').classList.add('hidden');
+            document.getElementById('investmentsContent').classList.add('hidden');
+            document.getElementById('transactionsContent').classList.add('hidden');
+            document.getElementById('referralsContent').classList.add('hidden');
+        }
+
+        function setActiveTab(index) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab')[index].classList.add('active');
+        }
+
+        // Wallet Functions
+        function updateWalletDisplay() {
+            if (currentUser) {
+                document.getElementById('walletBalance').textContent = `₦${currentUser.wallet.toLocaleString()}.00`;
+                // Update user in storage
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
+                    localStorage.setItem('easyfund_users', JSON.stringify(users));
+                }
+            }
+        }
+
+        function showDepositModal() {
+            document.getElementById('depositModal').classList.add('show');
+            document.getElementById('depositModal').style.display = 'flex';
+            // Clear previous values
+            document.getElementById('depositAmount').value = '';
+            document.getElementById('transactionRef').value = '';
+        }
+
+        function showWithdrawModal() {
+            if (currentUser.wallet < 1000) {
+                alert(currentLanguage === 'en' ? 'Minimum withdrawal is ₦1,000' : 'الحد الأدنى للسحب هو ₦1,000');
+                return;
+            }
+            document.getElementById('withdrawModal').classList.add('show');
+            document.getElementById('withdrawModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+            setTimeout(() => {
+                document.getElementById(modalId).style.display = 'none';
+            }, 300);
+        }
+
+        // New deposit request function
+        function submitDepositRequest() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            const transactionRef = document.getElementById('transactionRef').value;
+            
+            if (!amount || amount <= 0) {
+                alert(currentLanguage === 'en' ? 'Please enter valid amount' : 'يرجى إدخال مبلغ صحيح');
+                return;
+            }
+            
+            if (!transactionRef.trim()) {
+                alert(currentLanguage === 'en' ? 'Please enter transaction reference' : 'يرجى إدخال مرجع المعاملة');
+                return;
+            }
+
+            const depositRequest = {
+                id: Date.now(),
+                userId: currentUser.id,
+                userName: currentUser.name,
+                userEmail: currentUser.email,
+                amount: amount,
+                transactionRef: transactionRef,
+                status: 'pending',
+                requestDate: new Date()
+            };
+
+            depositRequests.push(depositRequest);
+            localStorage.setItem('easyfund_depositRequests', JSON.stringify(depositRequests));
+            
+            closeModal('depositModal');
+            
+            alert(currentLanguage === 'en' ? 
+                'Deposit request submitted! Admin will review and credit your account within 24 hours.' : 
+                'تم إرسال طلب الإيداع! سيقوم المدير بالمراجعة وإضافة المبلغ إلى حسابك خلال 24 ساعة.');
+        }
+
+        function confirmDeposit() {
+            // This function is now removed - replaced with submitDepositRequest
+            submitDepositRequest();
+        }
+
+        function processWithdraw() {
+            const bank = document.getElementById('withdrawBank').value;
+            const account = document.getElementById('withdrawAccount').value;
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+
+            if (!bank || !account || !amount) {
+                alert(currentLanguage === 'en' ? 'Please fill all fields' : 'يرجى ملء جميع الحقول');
+                return;
+            }
+
+            if (amount < 1000) {
+                alert(currentLanguage === 'en' ? 'Minimum withdrawal is ₦1,000' : 'الحد الأدنى للسحب هو ₦1,000');
+                return;
+            }
+
+            if (amount > currentUser.wallet) {
+                alert(currentLanguage === 'en' ? 'Insufficient balance' : 'رصيد غير كافي');
+                return;
+            }
+
+            currentUser.wallet -= amount;
+            addTransaction(currentUser.id, 'withdrawal', -amount, `Withdrawal to ${bank} - ${account}`);
+            updateWalletDisplay();
+            closeModal('withdrawModal');
+            
+            alert(currentLanguage === 'en' ? `₦${amount.toLocaleString()} withdrawal processed!` : `تم معالجة سحب ₦${amount.toLocaleString()}!`);
+        }
+
+        // Loan Functions
+        function applyLoan() {
+            const name = document.getElementById('loanName').value;
+            const nationalId = document.getElementById('loanNationalId').value;
+            const phone = document.getElementById('loanPhone').value;
+            const amount = parseFloat(document.getElementById('loanAmount').value);
+
+            if (!name || !nationalId || !phone || !amount) {
+                alert(currentLanguage === 'en' ? 'Please fill all fields' : 'يرجى ملء جميع الحقول');
+                return;
+            }
+
+            // Check if user already has active loan
+            const activeLoan = loans.find(l => l.userId === currentUser.id && l.status === 'active');
+            if (activeLoan) {
+                alert(currentLanguage === 'en' ? 'You already have an active loan' : 'لديك قرض نشط بالفعل');
+                return;
+            }
+
+            const requiredAmount = amount * 0.2;
+            if (currentUser.wallet < requiredAmount) {
+                alert(currentLanguage === 'en' ? 
+                    `You need ₦${requiredAmount.toLocaleString()} in your wallet (20% of loan amount)` : 
+                    `تحتاج ₦${requiredAmount.toLocaleString()} في محفظتك (20% من مبلغ القرض)`);
+                return;
+            }
+
+            const newLoan = {
+                id: Date.now(),
+                userId: currentUser.id,
+                name,
+                nationalId,
+                phone,
+                amount,
+                status: 'approved',
+                date: new Date(),
+                dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+            };
+
+            loans.push(newLoan);
+            localStorage.setItem('easyfund_loans', JSON.stringify(loans));
+
+            // Add loan amount to wallet
+            currentUser.wallet += amount;
+            addTransaction(currentUser.id, 'loan', amount, `Loan approved - ${amount.toLocaleString()}`);
+            updateWalletDisplay();
+            loadActiveLoan();
+
+            alert(currentLanguage === 'en' ? 'Loan approved successfully!' : 'تم الموافقة على القرض بنجاح!');
+        }
+
+        function loadActiveLoan() {
+            const activeLoan = loans.find(l => l.userId === currentUser.id && l.status === 'active');
+            const activeLoanCard = document.getElementById('activeLoanCard');
+            
+            if (activeLoan) {
+                activeLoanCard.style.display = 'block';
+                document.getElementById('activeLoanDetails').innerHTML = `
+                    <p><strong>${currentLanguage === 'en' ? 'Amount' : 'المبلغ'}:</strong> ₦${activeLoan.amount.toLocaleString()}</p>
+                    <p><strong>${currentLanguage === 'en' ? 'Status' : 'الحالة'}:</strong> ${activeLoan.status}</p>
+                    <p><strong>${currentLanguage === 'en' ? 'Date' : 'التاريخ'}:</strong> ${new Date(activeLoan.date).toLocaleDateString()}</p>
+                    <p><strong>${currentLanguage === 'en' ? 'Due Date' : 'تاريخ الاستحقاق'}:</strong> ${new Date(activeLoan.dueDate).toLocaleDateString()}</p>
+                `;
+                // Hide loan form
+                document.getElementById('loanForm').style.display = 'none';
+            } else {
+                activeLoanCard.style.display = 'none';
+                document.getElementById('loanForm').style.display = 'block';
+            }
+        }
+
+        // Investment Functions - Enhanced validation
+        function makeInvestment() {
+            const type = document.getElementById('investmentType').value;
+            const custom = document.getElementById('customInvestment').value;
+            const amount = parseFloat(document.getElementById('investmentAmount').value);
+
+            const investmentType = custom || type;
+            
+            if (!investmentType || !amount) {
+                alert(currentLanguage === 'en' ? 'Please fill all fields' : 'يرجى ملء جميع الحقول');
+                return;
+            }
+
+            if (amount < 5000) {
+                alert(currentLanguage === 'en' ? 'Minimum investment is ₦5,000' : 'الحد الأدنى للاستثمار هو ₦5,000');
+                return;
+            }
+
+            // Enhanced wallet validation
+            if (currentUser.wallet < amount) {
+                const shortfall = amount - currentUser.wallet;
+                alert(currentLanguage === 'en' ? 
+                    `Insufficient balance! You need ₦${shortfall.toLocaleString()} more. Current balance: ₦${currentUser.wallet.toLocaleString()}` : 
+                    `رصيد غير كافي! تحتاج ₦${shortfall.toLocaleString()} إضافية. الرصيد الحالي: ₦${currentUser.wallet.toLocaleString()}`);
+                return;
+            }
+
+            // Double confirm investment
+            const confirmMessage = currentLanguage === 'en' ? 
+                `Confirm investment of ₦${amount.toLocaleString()} in ${investmentType}?\n\nYou will receive ₦${(amount * 6).toLocaleString()} in 7 days.` :
+                `تأكيد استثمار ₦${amount.toLocaleString()} في ${investmentType}؟\n\nستحصل على ₦${(amount * 6).toLocaleString()} في 7 أيام.`;
+                
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            const newInvestment = {
+                id: Date.now(),
+                userId: currentUser.id,
+                type: investmentType,
+                amount,
+                returnAmount: amount * 6, // 600% return
+                status: 'active',
+                startDate: new Date(),
+                maturityDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+                progress: 0
+            };
+
+            investments.push(newInvestment);
+            localStorage.setItem('easyfund_investments', JSON.stringify(investments));
+
+            // Deduct from wallet
+            currentUser.wallet -= amount;
+            addTransaction(currentUser.id, 'investment', -amount, `Investment in ${investmentType}`);
+            updateWalletDisplay();
+            loadInvestments();
+
+            // Clear form
+            document.getElementById('investmentType').value = '';
+            document.getElementById('customInvestment').value = '';
+            document.getElementById('investmentAmount').value = '';
+
+            alert(currentLanguage === 'en' ? 
+                `Investment of ₦${amount.toLocaleString()} in ${investmentType} started successfully! You will receive ₦${(amount * 6).toLocaleString()} in 7 days.` : 
+                `تم بدء استثمار ₦${amount.toLocaleString()} في ${investmentType} بنجاح! ستحصل على ₦${(amount * 6).toLocaleString()} في 7 أيام.`);
+        }
+
+        function loadInvestments() {
+            const userInvestments = investments.filter(i => i.userId === currentUser.id);
+            const investmentsList = document.getElementById('investmentsList');
+            
+            investmentsList.innerHTML = userInvestments.map(investment => {
+                const progress = calculateInvestmentProgress(investment);
+                const daysLeft = Math.ceil((new Date(investment.maturityDate) - new Date()) / (1000 * 60 * 60 * 24));
+                
+                return `
+                    <div class="investment-card">
+                        <h4>${investment.type}</h4>
+                        <p><strong>${currentLanguage === 'en' ? 'Amount' : 'المبلغ'}:</strong> ₦${investment.amount.toLocaleString()}</p>
+                        <p><strong>${currentLanguage === 'en' ? 'Expected Return' : 'العائد المتوقع'}:</strong> ₦${investment.returnAmount.toLocaleString()}</p>
+                        <p><strong>${currentLanguage === 'en' ? 'Status' : 'الحالة'}:</strong> ${investment.status}</p>
+                        <p><strong>${currentLanguage === 'en' ? 'Days Left' : 'الأيام المتبقية'}:</strong> ${investment.status === 'active' ? daysLeft : 0}</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <p>${Math.round(progress)}% ${currentLanguage === 'en' ? 'Complete' : 'مكتمل'}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function calculateInvestmentProgress(investment) {
+            const now = new Date();
+            const start = new Date(investment.startDate);
+            const end = new Date(investment.maturityDate);
+            const total = end - start;
+            const elapsed = now - start;
+            return Math.min(100, Math.max(0, (elapsed / total) * 100));
+        }
+
+        function checkInvestmentMaturity() {
+            const now = new Date();
+            investments.forEach(investment => {
+                if (investment.status === 'active' && new Date(investment.maturityDate) <= now) {
+                    // Mature the investment
+                    investment.status = 'completed';
+                    
+                    // Add return to user wallet
+                    const user = users.find(u => u.id === investment.userId);
+                    if (user) {
+                        user.wallet += investment.returnAmount;
+                        addTransaction(user.id, 'investment_return', investment.returnAmount, 
+                            `Investment return - ${investment.type}`);
+                        
+                        if (user.id === currentUser.id) {
+                            currentUser = user;
+                            updateWalletDisplay();
+                        }
+                    }
+                }
+            });
+            localStorage.setItem('easyfund_investments', JSON.stringify(investments));
+        }
+
+        // Transaction Functions
+        function addTransaction(userId, type, amount, description) {
+            const transaction = {
+                id: Date.now(),
+                userId,
+                type,
+                amount,
+                description,
+                date: new Date()
+            };
+            transactions.push(transaction);
+            localStorage.setItem('easyfund_transactions', JSON.stringify(transactions));
+        }
+
+        function loadTransactions() {
+            const userTransactions = transactions.filter(t => t.userId === currentUser.id);
+            const transactionsList = document.getElementById('transactionsList');
+            
+            transactionsList.innerHTML = userTransactions.map(transaction => `
+                <div class="transaction-item">
+                    <div>
+                        <strong>${transaction.description}</strong><br>
+                        <small>${new Date(transaction.date).toLocaleString()}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong style="color: ${transaction.amount > 0 ? 'green' : 'red'}">
+                            ${transaction.amount > 0 ? '+' : ''}₦${Math.abs(transaction.amount).toLocaleString()}
+                        </strong><br>
+                        <small>${transaction.type}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Referral Functions
+        function generateReferralCode() {
+            return 'EF' + Math.random().toString(36).substr(2, 6).toUpperCase();
+        }
+
+        function loadReferrals() {
+            document.getElementById('userReferralCode').value = currentUser.referralCode;
+            document.getElementById('referralEarnings').textContent = `₦${currentUser.referralEarnings.toLocaleString()}`;
+        }
+
+        function copyReferralCode() {
+            const referralCode = document.getElementById('userReferralCode');
+            referralCode.select();
+            document.execCommand('copy');
+            alert(currentLanguage === 'en' ? 'Referral code copied!' : 'تم نسخ كود الإحالة!');
+        }
+
+        // Dashboard Stats
+        function updateDashboardStats() {
+            const userInvestments = investments.filter(i => i.userId === currentUser.id && i.status === 'active');
+            const userLoans = loans.filter(l => l.userId === currentUser.id && l.status === 'active');
+            const referralCount = users.filter(u => u.referredBy === currentUser.referralCode).length;
+
+            document.getElementById('totalInvestments').textContent = userInvestments.length;
+            document.getElementById('totalLoans').textContent = userLoans.length;
+            document.getElementById('totalReferrals').textContent = referralCount;
+        }
+
+        // Theme and Language Functions
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark', isDarkMode);
+            document.querySelector('[onclick="toggleTheme()"]').textContent = isDarkMode ? '☀️' : '🌙';
+            localStorage.setItem('easyfund_darkMode', isDarkMode);
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'ar' : 'en';
+            document.body.classList.toggle('rtl', currentLanguage === 'ar');
+            updateLanguage();
+            localStorage.setItem('easyfund_language', currentLanguage);
+        }
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-en]').forEach(element => {
+                const enText = element.getAttribute('data-en');
+                const arText = element.getAttribute('data-ar');
+                element.textContent = currentLanguage === 'en' ? enText : arText;
+            });
+        }
+
+        function loadUserData() {
+            const savedTheme = localStorage.getItem('easyfund_darkMode');
+            const savedLanguage = localStorage.getItem('easyfund_language');
+            
+            if (savedTheme === 'true') {
+                toggleTheme();
+            }
+            
+            if (savedLanguage) {
+                currentLanguage = savedLanguage;
+                if (currentLanguage === 'ar') {
+                    document.body.classList.add('rtl');
+                }
+                updateLanguage();
+            }
+        }
+
+        // Animation Functions
+        function animateLogin() {
+            const walletDisplay = document.querySelector('.wallet-display');
+            walletDisplay.style.transform = 'scale(0)';
+            setTimeout(() => {
+                walletDisplay.style.transition = 'transform 0.5s ease';
+                walletDisplay.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        function animateSignup() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        function animateWalletUpdate() {
+            const balance = document.getElementById('walletBalance');
+            balance.style.transform = 'scale(1.2)';
+            balance.style.color = 'var(--accent-color)';
+            setTimeout(() => {
+                balance.style.transform = 'scale(1)';
+                balance.style.color = 'white';
+            }, 300);
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Admin Functions
+        function showAdminPanel() {
+            if (currentUser && currentUser.email === 'admin@easyfund.com') {
+                document.getElementById('adminPanel').classList.remove('hidden');
+                updateAdminStats();
+                loadPendingDeposits();
+                loadAdminUserSelect();
+            }
+        }
+
+        function updateAdminStats() {
+            const totalUsers = users.filter(u => u.email !== 'admin@easyfund.com').length;
+            const totalDeposits = transactions
+                .filter(t => t.type === 'deposit')
+                .reduce((sum, t) => sum + t.amount, 0);
+            const totalLoans = loans
+                .filter(l => l.status === 'active')
+                .reduce((sum, l) => sum + l.amount, 0);
+
+            document.getElementById('adminTotalUsers').textContent = totalUsers;
+            document.getElementById('adminTotalDeposits').textContent = `₦${totalDeposits.toLocaleString()}`;
+            document.getElementById('adminTotalLoans').textContent = `₦${totalLoans.toLocaleString()}`;
+        }
+
+        function loadPendingDeposits() {
+            const pendingList = document.getElementById('pendingDeposits');
+            const pending = depositRequests.filter(req => req.status === 'pending');
+            
+            if (pending.length === 0) {
+                pendingList.innerHTML = '<p>No pending deposit requests</p>';
+                return;
+            }
+            
+            pendingList.innerHTML = pending.map(req => `
+                <div class="transaction-item" style="border: 2px solid var(--primary-color); margin-bottom: 15px; padding: 20px; border-radius: 10px;">
+                    <div>
+                        <strong>${req.userName}</strong> (${req.userEmail})<br>
+                        <strong>Amount:</strong> ₦${req.amount.toLocaleString()}<br>
+                        <strong>Transaction Ref:</strong> ${req.transactionRef}<br>
+                        <small>Requested: ${new Date(req.requestDate).toLocaleString()}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <button class="btn btn-success" onclick="approveDeposit(${req.id})" style="margin-bottom: 10px;">Approve</button><br>
+                        <button class="btn btn-danger" onclick="rejectDeposit(${req.id})">Reject</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadAdminUserSelect() {
+            const userSelect = document.getElementById('adminUserSelect');
+            const regularUsers = users.filter(u => u.email !== 'admin@easyfund.com');
+            
+            userSelect.innerHTML = '<option value="">Select a user</option>' + 
+                regularUsers.map(user => `<option value="${user.id}">${user.name} (${user.email})</option>`).join('');
+        }
+
+        function approveDeposit(requestId) {
+            const request = depositRequests.find(req => req.id === requestId);
+            if (!request) return;
+            
+            // Find the user and credit their wallet
+            const user = users.find(u => u.id === request.userId);
+            if (user) {
+                user.wallet += request.amount;
+                addTransaction(user.id, 'deposit', request.amount, `Admin approved deposit - Ref: ${request.transactionRef}`);
+                
+                // Update current user if it's the same person
+                if (currentUser && currentUser.id === user.id) {
+                    currentUser.wallet = user.wallet;
+                    updateWalletDisplay();
+                }
+                
+                // Mark request as approved
+                request.status = 'approved';
+                request.approvedDate = new Date();
+                
+                localStorage.setItem('easyfund_users', JSON.stringify(users));
+                localStorage.setItem('easyfund_depositRequests', JSON.stringify(depositRequests));
+                
+                loadPendingDeposits();
+                updateAdminStats();
+                
+                alert(`Deposit of ₦${request.amount.toLocaleString()} approved for ${request.userName}`);
+            }
+        }
+
+        function rejectDeposit(requestId) {
+            const request = depositRequests.find(req => req.id === requestId);
+            if (!request) return;
+            
+            const reason = prompt('Reason for rejection (optional):') || 'No reason provided';
+            
+            request.status = 'rejected';
+            request.rejectedDate = new Date();
+            request.rejectionReason = reason;
+            
+            localStorage.setItem('easyfund_depositRequests', JSON.stringify(depositRequests));
+            
+            loadPendingDeposits();
+            alert(`Deposit request from ${request.userName} has been rejected`);
+        }
+
+        function adminCreditUser() {
+            const userId = parseInt(document.getElementById('adminUserSelect').value);
+            const amount = parseFloat(document.getElementById('adminCreditAmount').value);
+            
+            if (!userId || !amount || amount <= 0) {
+                alert('Please select a user and enter a valid amount');
+                return;
+            }
+            
+            const user = users.find(u => u.id === userId);
+            if (!user) {
+                alert('User not found');
+                return;
+            }
+            
+            if (!confirm(`Credit ₦${amount.toLocaleString()} to ${user.name}?`)) {
+                return;
+            }
+            
+            user.wallet += amount;
+            addTransaction(user.id, 'admin_credit', amount, `Admin manual credit`);
+            
+            // Update current user if it's the same person
+            if (currentUser && currentUser.id === user.id) {
+                currentUser.wallet = user.wallet;
+                updateWalletDisplay();
+            }
+            
+            localStorage.setItem('easyfund_users', JSON.stringify(users));
+            
+            document.getElementById('adminCreditAmount').value = '';
+            updateAdminStats();
+            
+            alert(`₦${amount.toLocaleString()} credited to ${user.name} successfully!`);
+        }
+
+        // Enhanced Investment Notifications
+        function checkInvestmentNotifications() {
+            const userInvestments = investments.filter(i => i.userId === currentUser.id && i.status === 'active');
+            userInvestments.forEach(investment => {
+                const daysLeft = Math.ceil((new Date(investment.maturityDate) - new Date()) / (1000 * 60 * 60 * 24));
+                if (daysLeft === 1) {
+                    showNotification(
+                        currentLanguage === 'en' ? 
+                        `Your ${investment.type} investment matures tomorrow!` :
+                        `سينضج استثمارك في ${investment.type} غداً!`
+                    );
+                }
+            });
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 9999;
+                animation: slideIn 0.5s ease;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.5s ease';
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
+        }
+
+        // Enhanced Security Functions
+        function validatePassword(password) {
+            const minLength = password.length >= 6;
+            const hasNumber = /\d/.test(password);
+            const hasLetter = /[a-zA-Z]/.test(password);
+            
+            return {
+                isValid: minLength && hasNumber && hasLetter,
+                errors: [
+                    !minLength ? (currentLanguage === 'en' ? 'Password must be at least 6 characters' : 'كلمة المرور يجب أن تكون 6 أحرف على الأقل') : null,
+                    !hasNumber ? (currentLanguage === 'en' ? 'Password must contain a number' : 'كلمة المرور يجب أن تحتوي على رقم') : null,
+                    !hasLetter ? (currentLanguage === 'en' ? 'Password must contain a letter' : 'كلمة المرور يجب أن تحتوي على حرف') : null
+                ].filter(Boolean)
+            };
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Enhanced Loan Risk Assessment
+        function calculateLoanRisk(amount) {
+            const walletRatio = currentUser.wallet / amount;
+            const userHistory = transactions.filter(t => t.userId === currentUser.id).length;
+            
+            let risk = 'low';
+            if (walletRatio < 0.3 || userHistory < 5) risk = 'high';
+            else if (walletRatio < 0.5 || userHistory < 10) risk = 'medium';
+            
+            return risk;
+        }
+
+        // Investment Portfolio Analytics
+        function calculatePortfolioValue() {
+            const userInvestments = investments.filter(i => i.userId === currentUser.id);
+            const activeValue = userInvestments
+                .filter(i => i.status === 'active')
+                .reduce((sum, i) => sum + i.amount, 0);
+            const completedReturns = userInvestments
+                .filter(i => i.status === 'completed')
+                .reduce((sum, i) => sum + i.returnAmount, 0);
+            
+            return { activeValue, completedReturns, totalInvested: activeValue + completedReturns };
+        }
+
+        // Enhanced Dashboard with Portfolio
+        function updatePortfolioDisplay() {
+            const portfolio = calculatePortfolioValue();
+            const portfolioCard = document.createElement('div');
+            portfolioCard.className = 'stat-card';
+            portfolioCard.innerHTML = `
+                <div class="stat-number">₦${portfolio.totalInvested.toLocaleString()}</div>
+                <div>${currentLanguage === 'en' ? 'Total Portfolio Value' : 'إجمالي قيمة المحفظة'}</div>
+            `;
+            
+            const dashboardGrid = document.querySelector('.dashboard-grid');
+            if (dashboardGrid && !document.querySelector('.portfolio-card')) {
+                portfolioCard.classList.add('portfolio-card');
+                dashboardGrid.appendChild(portfolioCard);
+            }
+        }
+
+        // Auto-save functionality
+        function autoSave() {
+            if (currentUser) {
+                localStorage.setItem('easyfund_currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('easyfund_users', JSON.stringify(users));
+                localStorage.setItem('easyfund_investments', JSON.stringify(investments));
+                localStorage.setItem('easyfund_loans', JSON.stringify(loans));
+                localStorage.setItem('easyfund_transactions', JSON.stringify(transactions));
+                localStorage.setItem('easyfund_depositRequests', JSON.stringify(depositRequests));
+            }
+        }
+
+        // Performance optimizations
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Enhanced search and filter for transactions
+        function filterTransactions(type = 'all', dateRange = 'all') {
+            let userTransactions = transactions.filter(t => t.userId === currentUser.id);
+            
+            if (type !== 'all') {
+                userTransactions = userTransactions.filter(t => t.type === type);
+            }
+            
+            if (dateRange !== 'all') {
+                const now = new Date();
+                const days = dateRange === 'week' ? 7 : dateRange === 'month' ? 30 : 90;
+                const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+                userTransactions = userTransactions.filter(t => new Date(t.date) >= cutoff);
+            }
+            
+            return userTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        // Backup and restore functionality
+        function exportUserData() {
+            const userData = {
+                user: currentUser,
+                investments: investments.filter(i => i.userId === currentUser.id),
+                loans: loans.filter(l => l.userId === currentUser.id),
+                transactions: transactions.filter(t => t.userId === currentUser.id),
+                exportDate: new Date()
+            };
+            
+            const dataStr = JSON.stringify(userData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `easyfund_backup_${currentUser.id}_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        // Real-time updates
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                checkInvestmentMaturity();
+                checkInvestmentNotifications();
+                autoSave();
+                if (document.getElementById('dashboardContent').classList.contains('hidden') === false) {
+                    updateDashboardStats();
+                    updatePortfolioDisplay();
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        // Keyboard shortcuts
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case '1':
+                            e.preventDefault();
+                            showDashboard();
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            showLoans();
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            showInvestments();
+                            break;
+                        case '4':
+                            e.preventDefault();
+                            showTransactions();
+                            break;
+                        case '5':
+                            e.preventDefault();
+                            showReferrals();
+                            break;
+                        case 'd':
+                            e.preventDefault();
+                            showDepositModal();
+                            break;
+                        case 'w':
+                            e.preventDefault();
+                            showWithdrawModal();
+                            break;
+                    }
+                }
+            });
+        }
+
+        // Enhanced initialization
+        function initApp() {
+            checkAuthStatus();
+            updateLanguage();
+            loadUserData();
+            setupKeyboardShortcuts();
+            startRealTimeUpdates();
+            
+            // Add CSS animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+                .notification {
+                    font-weight: 500;
+                    cursor: pointer;
+                }
+                .notification:hover {
+                    transform: scale(1.05);
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Show welcome message
+            setTimeout(() => {
+                if (currentUser) {
+                    showNotification(
+                        currentLanguage === 'en' ? 
+                        `Welcome back, ${currentUser.name}!` :
+                        `مرحباً بعودتك، ${currentUser.name}!`
+                    );
+                }
+            }, 1000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+                setTimeout(() => {
+                    event.target.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Enhanced error handling
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Error: ', msg, 'URL: ', url, 'Line: ', lineNo);
+            showNotification(
+                currentLanguage === 'en' ? 
+                'An error occurred. Please refresh the page.' :
+                'حدث خطأ. يرجى تحديث الصفحة.'
+            );
+            return false;
+        };
+    </script>
+</body>
+</html>
